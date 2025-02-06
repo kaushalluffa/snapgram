@@ -76,6 +76,27 @@ export async function getCurrentUser() {
     return error;
   }
 }
+export async function getUserById(userId?: string) {
+  try {
+    const currentAccount = await account.get();
+    if (!userId) {
+      throw Error;
+    }
+    const userById = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      [Query.equal("accountId", userId || currentAccount?.$id)]
+    );
+
+    if (!userById) {
+      throw Error;
+    }
+    return userById.documents?.[0];
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
 export async function signOut() {
   try {
     const session = await account.deleteSession("current");
@@ -102,7 +123,7 @@ export async function createPost(post: INewPost) {
       appwriteConfig.postsCollectionId,
       ID.unique(),
       {
-        creator: post?.userId,
+        creator: [post?.userId],
         caption: post?.caption,
         imageUrl: fileUrl,
         imageId: uploadedFile?.$id,
@@ -193,8 +214,8 @@ export async function savePost(userId: string, postId: string) {
       appwriteConfig.savesCollectionId,
       ID.unique(),
       {
-        user: userId,
-        post: postId,
+        user: [userId],
+        post: [postId],
       }
     );
 
@@ -367,6 +388,22 @@ export async function searchPosts(searchTerm: string) {
     if (!posts) throw Error;
 
     return posts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function getAllUsers(searchTerm?: string) {
+  try {
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      searchTerm
+        ? [Query.search("name", searchTerm)]
+        : [Query.orderDesc("$createdAt")]
+    );
+    if (!users) throw Error;
+
+    return users;
   } catch (error) {
     console.log(error);
   }

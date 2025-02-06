@@ -25,7 +25,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
   const { data: currentUser }: any = useGetCurrentUser();
 
   const savedPostRecord = currentUser?.save?.find(
-    (record: Models.Document) => record?.post?.$id === post?.$id
+    (record: Models.Document) => record?.post?.[0]?.$id === post?.$id
   );
   useEffect(() => {
     setIsSaved(!!savedPostRecord);
@@ -79,7 +79,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
           onClick={(e) => handleLikePost(e)}
           className="cursor-pointer"
         />
-        <p className="small-medium lg:base-medium">0</p>
+        <p className="small-medium lg:base-medium">{likes?.length || 0}</p>
       </div>
       <div className="flex gap-2 ">
         <img
