@@ -11,6 +11,7 @@ const PostCard = ({ post }: PostCardProps) => {
   if (!post?.creator) {
     return null;
   }
+  console.log(post,'post')
   return (
     <div className="post-card">
       <div className="flex-between">
@@ -26,7 +27,7 @@ const PostCard = ({ post }: PostCardProps) => {
           </Link>
           <div className="flex flex-col">
             <p className="base-mediumn lg:body-bold text-light-1">
-              {post?.creator?.name}
+              {post?.creator?.name || post?.username}
             </p>
             <div className="flex-center gap-2 text-light-3">
               <p className="subtle-semibold lg:small-regular">
